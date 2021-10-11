@@ -1,0 +1,10 @@
+command /loginmenu:
+    permission: loginmenu.sk
+    permission message: &cPas la permission
+    trigger:
+        wait 2 tick
+        open chest with 3 rows named "&6> Menu Login" to player
+        wait a tick
+        format slot 13 of player with diamond named "&c Help" with lore "&cNos commandes" to run [make player execute command "/loginpro help"]
+        format slot 11 of player with iron chestplate named "&cBug" with lore "&cReload le plugin" to close then run [make player execute command "/loginpro reload"]
+        format slot 15 of player with paper named "&cIp Joueur" with lore "&cPour voir les ip des joueurs" to close then run [make player execute command "/ip"]
