@@ -1,12 +1,12 @@
 # LoginPro
 
-===============
+
 The LoginPro
-===============
+
 Plugin login/register
-===============
+
 Commandes
-===============
+
 /changePassword
 /register
 /login
@@ -18,9 +18,9 @@ Commandes
 /ip (player)
 /loginpro help
 /loginpro reload
-===============
+
 Permission
-================
+
 - staff.resetpassword
 - staffip.sk
 - setlobby.sk
