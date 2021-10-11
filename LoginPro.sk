@@ -1,0 +1,270 @@
+on join:
+	if {%player%.logged} is not set:
+		set {%player%.move} to false
+		set walk speed of player to 0
+		send "&b&m---------------------------------------------" to player
+		send "&c         Please login &4&l/login <password>   " to player
+		send "&c              you dont have an account ?           " to player
+		send "&c         Register &4&l/register <password>&f!" to player
+		send "&b&m---------------------------------------------" to player
+		teleport player to {lobby}
+		
+
+command /register [<text>] [<text>]:
+	trigger:
+		if {%player%.logged} is not set:
+			if arg 1 is set:
+				if arg 2 is set:
+					if arg 1 = arg 2:
+						set {%player%.password} to arg 1
+						send "&c[Login] &cPassword is good, please log out: %{%player%.password}%"
+						set {%player%.logged} to true
+						clear {movefalser.%player%}
+						stop
+					else:
+						send "&c[Login] &cPassword is incorrect: %arg 1% %arg 2%"
+						send player title "&cErreur" with subtitle "&cPassword is incorrect" for 2 seconds
+						stop
+				else:
+					send "&c[Login] You must put 2 password"
+					send "&c[Login] /register [<password>] [<password>]"
+					send player title "&cErreur" with subtitle "&c/register [<password>] [<password>]" for 2 seconds
+					stop
+			else:
+				send "&c[Login] Please: /register [<password>] [<password>]"
+				send player title "&cErreur" with subtitle "&c/register [<password>] [<password>]" for 2 seconds
+				stop
+		else:
+			send "&c[Login] &cYou are login!"
+			stop
+command /login [<text>] [<text>]:
+	trigger:
+		if arg 1 is not set:
+			send "&cPut your password" to player
+			send "&clost password? /changePassword" to player
+		if arg 1 is set:
+			arg 2 is not set:
+				if {%player%.password} is set:
+					if {%player%.password} is arg 1:
+						if {%player%.logged} is not set:
+							send "&cYou are connected!" to player
+							set walk speed of player to 0.3
+							set {%player%.logged} to true
+						else:
+							send "&cYou dont login" to player
+					else:
+						send "&cDont password" to player
+						send "&cReloggin you please" to player
+				else:
+					send "&cLogin you please!" to player
+					send "&cThe command is &l/register <password>" to player 
+			else:
+				send "&cYou must not put 2 password!" to player
+		else:
+			send "&cYou password please" to player
+command /changePassword [<text>] [<text>] [<offline player>]:
+	trigger:
+		if {%player%.password} is set:
+			if {%player%.logged} is not set:
+				send "&c[Login] you are not login !"
+				stop
+			else:
+				if arg 1 is set:
+					if arg 2 is set:
+						if arg 3 is not set:
+							if arg 1 = arg 2:
+								set {%player%.password} to arg 1
+								send "&c[Login] &cPassword is correct: %{%player%.password}%"
+								stop
+							else:
+								send "&c[Login] You must put 2 password"
+								send "&c[Login] /changePassword [<password>] [<password>]"
+								stop
+						if arg 3 is set:
+							if player has permission "staffchangemdp.sk":
+								if arg 1 = arg 2:
+									set {password.%arg 3%} to arg 1
+									send "&c[Login] Your new password %arg 3%: %{%player%.password}%"
+									stop
+								else:
+									send "&c[Login] the password is incorrect: %arg 1% %arg 2%"
+									send "&c[Login] /changePassword [<password>] [<password>] [<offline player>]"
+									stop
+							else:
+								send "&c[Login] You dont have permission"
+								stop
+					if arg 2 is not set:
+						send "&c[Login] You must put 2 password"
+						send "&c[Login] /changePassword [<password>] [<password>] [<offline player>]"
+						stop
+				if arg 1 is not set:
+					send "&c[Login] made: /changePassword [<password>] [<password>]"
+					stop
+			if {%player%.password} is not set:
+				send "&c[Login] Password is incorrect"
+				send "&c[Login] /register [<password>] [<password>]"
+				stop
+on damage:
+	if {login.%victim%} is not set:
+		cancel event
+	if {login.%attacker%} is not set:
+		cancel event
+on command:
+	if {login.%attacker%} is not set:
+		full command is not "login" or "register"
+		send "&c[Login] You are not connected!"
+
+command /removepassword [<text>] [<text>]:
+	permission: staff.resetpassword
+	permission message: {@nopermoption}
+	usage: /removepassword
+	trigger:
+		set {_use} to "&cUse /removepassword <player>"
+		if arg-1 is not set:
+			message {_use}
+		if arg-1 is set:
+			set {_arg1} to arg-1 parsed as offline player
+			if {_arg1} is not set:
+				message "&cPlayer not found."
+			else:
+				set {_arg1uuid} to {_arg1}'s uuid
+				delete {player::login::password::%{_arg1uuid}%}
+				if {_arg1} is online:
+					kick {_arg1} due to "&cStaff reset you mdp !"
+				message "&cThe new password is %{_arg1}%."
+				
+command /loginpro [<text>]:
+	aliases: /lgh
+	permission: loginhelp.sk
+	trigger:
+		if arg 1 is not set:
+			message "&c/loginpro help"
+		if arg 1 is "help":
+			if player doesn't have permission "loginhelp.sk":
+				message "{@Error}"
+			else:
+				message "&b&m------------------------------------------------"
+				message "&cLogin: &4&l/login (password)"
+				message "&cRegister: &4&l/register (password)"
+				message "&cView player ip: &4&l/ip (player)"
+				message "&cSetLobby: &4&l/setlobby"
+			    message "&cSetHub: &4&l/sethub"
+				message "&b&m------------------------------------------------"
+				message "&c"
+		if arg 1 is "reload":
+			make console execute command "skript:sk reload gStaffLogin"
+			wait 1 tick
+			message "&bLoginPro reload"
+		else:
+			stop
+			
+command /logininfo [<text>]:
+	aliases: loginversion
+	trigger:
+		send "&6lLogin &8Â» &6Info : "
+		send "&8&m-â”‚---------------------------â”‚-"
+		send "&fVersion: &e1.5"
+		send "&fDev: &eroilil"
+		send "&8&m-â”‚---------------------------â”‚-"	
+
+command /ip [<Player>]:
+	permission: staffip.sk
+	trigger:
+		if arg 1 is not set:
+			set {_ip} to player's ip
+			send "&cIP player&8: &f(&b%player%&f)"
+			send "&3IP&8: &f%{_ip}%"
+		if arg 1 is set:
+			send "&cPlayer %arg 1%&8: &bIP is"
+			set {_ip} to arg 1's ip
+			send "&cIP&8: &c%{_ip}%"
+
+command /setlobby [<text>]:
+    permission: setlobby.sk
+    trigger:
+        if arg-1 is not set:
+            set {lobby} to location of player
+            send "&cLobby&d%{lobby}%&Lobby is ok"
+        if arg-1 is "reset":
+            send "&cLobby reset"
+            delete {lobby}
+        if arg-1 is "check":
+            if {lobby} is set:
+                send "&cLobby set: &d%{lobby}%"
+            else:
+                send "&cThe Lobby"
+
+command /lobby [<text>] [<text>] [<text>]:
+	trigger:
+		if arg-1 is not set:
+			if player have permission "{@UserPerm}":
+				if {lobby} is set:
+					send "&6Lobby: &6Teleport to hub, waits 5 seconds."
+					wait 5 seconds
+
+command /sethub [<text>]:
+    permission: setlobby.sk
+    trigger:
+        if arg-1 is not set:
+            set {lobby} to location of player
+            send "&cHub&d%{lobby}%&is good"
+        if arg-1 is "reset":
+            send "&cLobby reset"
+            delete {lobby}
+        if arg-1 is "check":
+            if {lobby} is set:
+                send "&cHub set: &d%{lobby}%"
+            else:
+                send "&cThe hub"
+
+command /hub [<text>] [<text>] [<text>]:
+    trigger:
+        if arg-1 is not set:
+            if player have permission "{@UserPerm}":
+                if {lobby} is set:
+                    send "&6Lobby: &6Teleport to hub, waits 5 seconds."
+                    wait 5 seconds
+                    teleport player to {lobby}
+                    
+on join:
+	set join message to "&c%player% &6Just logged in!"
+ 
+on quit:
+	set leave message to "&c%player% &6Just disconnect!"
+
+on chat:
+	if {%player%.logged} is false:
+		cancel event
+	if {%player%.logged} is not set:
+		cancel event
+
+on disconnect:
+	delete {%player%.logged}		
+
+on damage:
+	victim is a player:
+		{%victim%.logged} is not set:
+			cancel event
+		{%victim%.logged} is not set:
+			cancel event
+
+on drop:
+	if {%player%.logged} is false:
+		cancel event
+	if {%player%.logged} is not set:
+		cancel event
+
+on any movement:
+	{%player%.logged} is false:
+		cancel event
+	{%player%.logged} is not set:
+		cancel event
+
+on command:
+	command is "login" or "register":
+		add 1 to {_nothing}
+	else:
+		{%player%.logged} is false:
+			cancel event
+		{%player%.logged} is not set:
+			cancel event
