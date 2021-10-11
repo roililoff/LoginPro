@@ -3,7 +3,7 @@
 ================================
 The LoginPro
 ================================
-Spoiler: Login================================
+================================
 Le plugin LoginPro es un plugin de qualité
 pour tous serveur ! Ce plugin, vous garantie
 une sécurité 100% fiable avec plusieurs
