@@ -54,7 +54,7 @@ command /login [<text>] [<text>]:
 							send "&cTu doit te connecter" to player
 					else:
 						send "&cMauvais mot de passe" to player
-						send "&cTu doit refaire ta connection" to player
+						send "&cTu doit refaire aa connection" to player
 				else:
 					send "&cVeuillez vous connecter" to player
 					send "&cCommande: &l/register <password>" to player 
